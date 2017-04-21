@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import datetime
+import shlex
 
 now = datetime.datetime.now()
 
@@ -50,10 +51,8 @@ def select_icon(filename):
     else:
         return 'glyphicon glyphicon-leaf'
 
-def get_fielpathlink(f):
-    return f
-    #return "<span class=\"glyphicon glyphicon-share-alt filetree-grey\" title=\""+f+"\"></span>"
-
+def get_filepathlink(a,f):
+    return shlex.quote(os.path.join(a, f))
 
 def tracing(a):
     files = []
@@ -64,14 +63,14 @@ def tracing(a):
         else:
             dirs.append(item)
     for d in sorted(dirs):
-        print "<li data-path=\""+get_fielpathlink(os.path.join(a, d))+"\" title=\"Size: " + human_size(get_size(os.path.join(a, d))) + "\">" + d + "\n<ul>"
+        print ("<li data-path=\"", get_filepathlink(a, d), "\" title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>")
         tracing(os.path.join(a, d))
-        print "</ul></li>\n"
+        print ("</ul></li>\n")
     for f in sorted(files):
-        print "<li data-path=\""+get_fielpathlink(os.path.join(a, f))+"\" title=\"Size: " + human_size(os.path.getsize(os.path.join(a, f))) + "\" data-jstree='{\"icon\":\""+select_icon(f)+"\"}'>" + f +"</li>\n"
+        print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'>", f, "</li>\n")
 
 
-print """
+print ("""
 <!DOCTYPE html>
 <html>
   <head>
@@ -98,9 +97,9 @@ print """
   <body>
     <h1>Filetree</h1>
     <h4>Last Update: <span class="label label-info">
-    """
-print now.strftime("%Y-%m-%d %H:%M")
-print """
+    """)
+print (now.strftime("%Y-%m-%d %H:%M"))
+print ("""
     </span></h4>
     <div class="formarea">
       <div class="col-md-3">
@@ -115,9 +114,9 @@ print """
     </div>
     <div id=\"tree\">
       <ul>
-    """
+    """)
 tracing('.')
-print """
+print ("""
       </ul>
     </div>
     <!-- jQuery & Bootstrap -->
@@ -134,6 +133,7 @@ print """
         $('#tree').jstree(true).settings.search.show_only_matches = true;
         $('#tree').on('changed.jstree', function (e, data) {
           if(data && data.selected && data.selected.length) {
+            console.log(data.node.data);
             $('#selectedpath').val(data.node.data.path);
           }
         });
@@ -148,4 +148,4 @@ print """
     </script>
   </body>
 </html>
-"""
+""")
