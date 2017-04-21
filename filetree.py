@@ -50,6 +50,11 @@ def select_icon(filename):
     else:
         return 'glyphicon glyphicon-leaf'
 
+def get_fielpathlink(f):
+    return f
+    #return "<span class=\"glyphicon glyphicon-share-alt filetree-grey\" title=\""+f+"\"></span>"
+
+
 def tracing(a):
     files = []
     dirs = []
@@ -59,11 +64,11 @@ def tracing(a):
         else:
             dirs.append(item)
     for d in sorted(dirs):
-        print "<li title=\"Size: " + human_size(get_size(os.path.join(a, d))) + "\">" + d + "\n<ul>"
+        print "<li data-path=\""+get_fielpathlink(os.path.join(a, d))+"\" title=\"Size: " + human_size(get_size(os.path.join(a, d))) + "\">" + d + "\n<ul>"
         tracing(os.path.join(a, d))
         print "</ul></li>\n"
     for f in sorted(files):
-        print "<li title=\"Size: " + human_size(os.path.getsize(os.path.join(a, f))) + "\" data-jstree='{\"icon\":\""+select_icon(f)+"\"}'>" + f + "</li>\n"
+        print "<li data-path=\""+get_fielpathlink(os.path.join(a, f))+"\" title=\"Size: " + human_size(os.path.getsize(os.path.join(a, f))) + "\" data-jstree='{\"icon\":\""+select_icon(f)+"\"}'>" + f +"</li>\n"
 
 
 print """
@@ -80,10 +85,13 @@ print """
     <!-- jsTree -->
     <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.4/themes/default/style.min.css\" >
     <style>
-      .search:after {
+      .formarea:after {
         content: '';
         display: block;
         clear: both;
+      }
+      .filetree-grey {
+        color: grey;
       }
     </style>
   </head>
@@ -94,12 +102,17 @@ print """
 print now.strftime("%Y-%m-%d %H:%M")
 print """
     </span></h4>
-    <div class="search">
+    <div class="formarea">
       <div class="col-md-3">
         <input type="text" class="form-control" id="treesearch" placeholder="search">
       </div>
+      <div class="col-md-3">
+        <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon2">Path</span>
+          <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
+        </div>
+      </div>
     </div>
-
     <div id=\"tree\">
       <ul>
     """
@@ -118,8 +131,12 @@ print """
           "plugins" : [ "search" ]
         });
         var to = false;
-        console.log('buhu');
         $('#tree').jstree(true).settings.search.show_only_matches = true;
+        $('#tree').on('changed.jstree', function (e, data) {
+          if(data && data.selected && data.selected.length) {
+            $('#selectedpath').val(data.node.data.path);
+          }
+        });
         $('#treesearch').keyup(function () {
           if(to) { clearTimeout(to); }
           to = setTimeout(function () {
