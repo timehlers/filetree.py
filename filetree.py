@@ -77,17 +77,17 @@ def tracing(a):
     for d in sorted(dirs):
         if os.path.join(a, d) != "./new" and os.path.join(a, d) != "./USB8.old-look-into-new" and os.path.join(a, d) != "./fonts" and os.path.join(a, d) != "./te":
             try:
-                print ("<li data-path=\"", get_filepathlink(a, d), "\" title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
+                print ("<li title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
             except UnicodeEncodeError:
-                print ("<li data-path=\"", get_filepathlink(bad_filename(a), bad_filename(d)), "\" title=\"Size: ", human_size(get_size(os.path.join(bad_filename(a), bad_filename(d)))), "\">", bad_filename(d), "\n<ul>",sep="")
+                print ("<li title=\"Size: ", human_size(get_size(os.path.join(bad_filename(a), bad_filename(d)))), "\">", bad_filename(d), "\n<ul>",sep="")
             tracing(os.path.join(a, d))
             print ("</ul></li>\n")
     for f in sorted(files):
         if select_icon(f) != "glyphicon glyphicon-leaf":
             try:
-                print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
+                print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
             except UnicodeEncodeError:
-                print ("<li data-path=\"", get_filepathlink(bad_filename(a), bad_filename(f)), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a), "/", bad_filename(f), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a)), "/", urllib.parse.quote(bad_filename(f)), ">", bad_filename(f), "</a></li>\n",sep="")
+                print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a), "/", bad_filename(f), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a)), "/", urllib.parse.quote(bad_filename(f)), ">", bad_filename(f), "</a></li>\n",sep="")
 
 def print_head():
     print ("""
@@ -133,12 +133,6 @@ def print_head():
             <input type="search" id="treesearch" />
             <button type="submit">Search</button>
         </form>
-        <div class="col-md-3">
-            <div class="input-group">
-            <span class="input-group-addon" id="sizing-addon2">Path</span>
-            <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
-            </div>
-        </div>
         <div id=\"tree\">
         <ul>
         """)
@@ -161,9 +155,8 @@ def print_bottom():
 
     print ("""
         <script>
-        $(function () {
           $('#tree').jstree({
-            "plugins" : [ "search" ]
+              "plugins" : ["search"]
           });
           $('#tree').on('search.jstree before_open.jstree', function (e, data) {
               if(data.instance.settings.search.show_only_matches) {
@@ -177,12 +170,7 @@ def print_bottom():
               $('#tree').jstree('close_all');
               $('#tree').jstree(true).settings.search.show_only_matches = true;
               $('#tree').jstree(true).search($('#treesearch').val());
-          $('#tree').on('changed.jstree', function (e, data) {
-            if(data && data.selected && data.selected.length) {
-              $('#selectedpath').val(data.node.data.path);
-            }
           });
-        });
         </script>
     </body>
     </html>
