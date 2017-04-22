@@ -3,11 +3,18 @@
 import os
 import datetime
 import shlex
+import argparse
 
 now = datetime.datetime.now()
 
-# allow to set a local library path where all css and js reside flat
-LIBRARY_PATH = os.environ.get("LIBRARY_PATH", None)
+parser = argparse.ArgumentParser(description='Recurse directory into jsTree HTML.')
+parser.add_argument('-b', '--base', default='.',
+                   help='directory that is the base for the tree')
+parser.add_argument('-a', '--assets', default=None,
+                   help='path to assets directory relative to html file for loading js and css locally')
+parser.add_argument('-p', '--prefix', default='',
+                   help='absolute path prefix to add in paths')
+args = parser.parse_args()
 
 def human_size(number):
     supportedunits = ['B', 'KB', 'MB', 'GB', 'TB']
@@ -55,7 +62,7 @@ def select_icon(filename):
         return 'glyphicon glyphicon-leaf'
 
 def get_filepathlink(a,f):
-    return shlex.quote(os.path.join(a, f))
+    return shlex.quote(os.path.normpath(os.path.join(args.prefix, a, f)))
 
 def tracing(a):
     files = []
@@ -81,11 +88,11 @@ def print_head():
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
         <title>Filetree</title>
         """)
-    if LIBRARY_PATH != None:
-        print ("<link rel=\"stylesheet\" href=\"",LIBRARY_PATH,"bootstrap.min.css\">",sep="")
-        print ("<link rel=\"stylesheet\" href=\"",LIBRARY_PATH,"bootstrap-theme.min.css\">",sep="")
-        print ("<link rel=\"stylesheet\" href=\"",LIBRARY_PATH,"font-awesome.min.css\">",sep="")
-        print ("<link rel=\"stylesheet\" href=\"",LIBRARY_PATH,"style.min.css\" >",sep="")
+    if args.assets != None:
+        print ("<link rel=\"stylesheet\" href=\"",args.assets,"bootstrap.min.css\">",sep="")
+        print ("<link rel=\"stylesheet\" href=\"",args.assets,"bootstrap-theme.min.css\">",sep="")
+        print ("<link rel=\"stylesheet\" href=\"",args.assets,"font-awesome.min.css\">",sep="")
+        print ("<link rel=\"stylesheet\" href=\"",args.assets,"style.min.css\" >",sep="")
     else:
         print ("""
             <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\">
@@ -132,10 +139,10 @@ def print_bottom():
         </ul>
         </div>
         """)
-    if LIBRARY_PATH != None:
-        print ("<script src=\"",LIBRARY_PATH,"jquery-1.12.4.min.js\"></script>",sep="")
-        print ("<script src=\"",LIBRARY_PATH,"bootstrap.min.js\"></script>",sep="")
-        print ("<script src=\"",LIBRARY_PATH,"jstree.min.js\"></script>",sep="")
+    if args.assets != None:
+        print ("<script src=\"",args.assets,"jquery-1.12.4.min.js\"></script>",sep="")
+        print ("<script src=\"",args.assets,"bootstrap.min.js\"></script>",sep="")
+        print ("<script src=\"",args.assets,"jstree.min.js\"></script>",sep="")
     else:
         print ("""
             <script src=\"https://code.jquery.com/jquery-1.12.4.min.js\"></script>
@@ -172,5 +179,5 @@ def print_bottom():
 if __name__ == "__main__":
     # execute only if run as a script
     print_head()
-    tracing('.')
+    tracing(args.base)
     print_bottom()
