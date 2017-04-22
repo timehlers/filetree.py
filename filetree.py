@@ -83,7 +83,7 @@ def tracing(a):
             tracing(os.path.join(a, d))
             print ("</ul></li>\n")
     for f in sorted(files):
-        if select_icon(f) != "glyphicon glyphicon-leaf":
+        if select_icon(f) = "glyphicon glyphicon-film":
             try:
                 print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
             except UnicodeEncodeError:
