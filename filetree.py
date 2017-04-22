@@ -4,6 +4,7 @@ import os
 import datetime
 import shlex
 import argparse
+import urllib.parse
 
 now = datetime.datetime.now()
 
@@ -79,7 +80,7 @@ def tracing(a):
             print ("</ul></li>\n")
     for f in sorted(files):
         if select_icon(f) != "glyphicon-leaf":
-            print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'>", f, "</li>\n",sep="")
+            print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
 
 def print_head():
     print ("""
