@@ -109,7 +109,8 @@ def tracing(a):
             for d in dirwithletter:
                 for file in os.listdir(d.split(' SEPARATOR ', 1)[1]):
                     if os.path.isfile(os.path.join(d.split(' SEPARATOR ', 1)[1], file)):
-                        print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(d.split(' SEPARATOR ', 1)[1], file))), "\" data-jstree='{\"icon\":\"", select_icon(file), "\"}'", "onclick=\"window.location.href='", os.path.join(d.split(' SEPARATOR ', 1)[1]), "/", file, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(os.path.join(d.split(' SEPARATOR ', 1)[1])), "/", urllib.parse.quote(file), ">", os.path.join(d.split(' SEPARATOR ', 1)[0]), "/", file, "</a></li>\n",sep="")
+                        if select_icon(file) == "glyphicon glyphicon-film" or select_icon(file) == "glyphicon glyphicon-subtitles" or select_icon(file) == "glyphicon glyphicon-tags":
+                            print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(d.split(' SEPARATOR ', 1)[1], file))), "\" data-jstree='{\"icon\":\"", select_icon(file), "\"}'", "onclick=\"window.location.href='", os.path.join(d.split(' SEPARATOR ', 1)[1]), "/", file, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(os.path.join(d.split(' SEPARATOR ', 1)[1])), "/", urllib.parse.quote(file), ">", os.path.join(d.split(' SEPARATOR ', 1)[0]), "/", file, "</a></li>\n",sep="")
             print ("</ul></li>\n")
 
 def print_head():
