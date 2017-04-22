@@ -145,9 +145,9 @@ def print_bottom():
         </div>
         """)
     if args.assets != None:
-        print ("<script src=\"",args.assets,"js/jquery-1.12.4.min.js\"></script>",sep="")
-        print ("<script src=\"",args.assets,"js/bootstrap.min.js\"></script>",sep="")
-        print ("<script src=\"",args.assets,"js/jstree.min.js\"></script>",sep="")
+        print ("<script src=\"",args.assets,"jquery-1.12.4.min.js\"></script>",sep="")
+        print ("<script src=\"",args.assets,"bootstrap.min.js\"></script>",sep="")
+        print ("<script src=\"",args.assets,"jstree.min.js\"></script>",sep="")
     else:
         print ("""
             <script src=\"https://code.jquery.com/jquery-1.12.4.min.js\"></script>
