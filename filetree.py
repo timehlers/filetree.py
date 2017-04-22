@@ -6,6 +6,8 @@ import shlex
 import argparse
 import urllib.parse
 import sys
+from itertools import groupby
+from operator import itemgetter
 
 now = datetime.datetime.now()
 
@@ -16,6 +18,8 @@ parser.add_argument('-a', '--assets', default=None,
                    help='path to assets directory relative to html file for loading js and css locally')
 parser.add_argument('-p', '--prefix', default='',
                    help='absolute path prefix to add in paths')
+parser.add_argument('-s', '--sortfiles', default=None, action="store_true",
+                   help='create alphabetical sorting for files')
 args = parser.parse_args()
 
 def human_size(number):
@@ -67,29 +71,45 @@ def get_filepathlink(a,f):
     return shlex.quote(os.path.normpath(os.path.join(args.prefix, a, f)))
 
 def tracing(a):
-    files = []
-    dirs = []
-    for item in os.listdir(a):
-        ### do NOT trace links
-        if not os.path.islink(os.path.join(a, item)):
-            if os.path.isfile(os.path.join(a, item)):
-                files.append(item)
-            else:
-                dirs.append(item)
-    for d in sorted(dirs):
-        if os.path.join(a, d) != "./new" and os.path.join(a, d) != "./USB8.old-look-into-new" and os.path.join(a, d) != "./fonts" and os.path.join(a, d) != "./te":
-            try:
-                print ("<li title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
-            except UnicodeEncodeError:
-                print ("<li title=\"Size: ", human_size(get_size(os.path.join(bad_filename(a), bad_filename(d)))), "\">", bad_filename(d), "\n<ul>",sep="")
-            tracing(os.path.join(a, d))
+    if args.sortfiles != True:
+        files = []
+        dirs = []
+        for item in os.listdir(a):
+            ### do NOT trace links
+            if not os.path.islink(os.path.join(a, item)):
+                if os.path.isfile(os.path.join(a, item)):
+                    files.append(item)
+                else:
+                    dirs.append(item)
+        for d in sorted(dirs):
+            if os.path.join(a, d) != "./new" and os.path.join(a, d) != "./USB8.old-look-into-new" and os.path.join(a, d) != "./fonts" and os.path.join(a, d) != "./te":
+                try:
+                    print ("<li title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
+                except UnicodeEncodeError:
+                    print ("<li title=\"Size: ", human_size(get_size(os.path.join(bad_filename(a), bad_filename(d)))), "\">", bad_filename(d), "\n<ul>",sep="")
+                tracing(os.path.join(a, d))
+                print ("</ul></li>\n")
+        for f in sorted(files):
+            if select_icon(f) == "glyphicon glyphicon-film" or select_icon(f) == "glyphicon glyphicon-subtitles" or select_icon(f) == "glyphicon glyphicon-tags":
+                try:
+                    print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
+                except UnicodeEncodeError:
+                    print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a).encode('latin1'), "/", bad_filename(f).encode('latin1'), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a).encode('latin1')), "/", urllib.parse.quote(bad_filename(f).encode('latin1')), ">", bad_filename(f), "</a></li>\n",sep="")
+    else:
+        dirs = []
+        files = []
+        for dirpath, dirnames, filenames in os.walk(a):
+            for d in dirnames:
+                 if "." in d:
+                     dirs.append(d + " SEPARATOR " + os.path.join(dirpath, d))
+        dirs.sort(key=str.lower)
+        for letter, dirwithletter in groupby(dirs, key=itemgetter(0)):
+            print ("<li title=\"", letter , "\">", letter , "\n<ul>",sep="")
+            for d in dirwithletter:
+                for file in os.listdir(d.split(' SEPARATOR ', 1)[1]):
+                    if os.path.isfile(os.path.join(d.split(' SEPARATOR ', 1)[1], file)):
+                        print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(d.split(' SEPARATOR ', 1)[1], file))), "\" data-jstree='{\"icon\":\"", select_icon(file), "\"}'", "onclick=\"window.location.href='", os.path.join(d.split(' SEPARATOR ', 1)[1]), "/", file, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(os.path.join(d.split(' SEPARATOR ', 1)[1])), "/", urllib.parse.quote(file), ">", os.path.join(d.split(' SEPARATOR ', 1)[0]), "/", file, "</a></li>\n",sep="")
             print ("</ul></li>\n")
-    for f in sorted(files):
-        if select_icon(f) == "glyphicon glyphicon-film" or select_icon(f) == "glyphicon glyphicon-subtitles" or select_icon(f) == "glyphicon glyphicon-tags":
-            try:
-                print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
-            except UnicodeEncodeError:
-                print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a).encode('latin1'), "/", bad_filename(f).encode('latin1'), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a).encode('latin1')), "/", urllib.parse.quote(bad_filename(f).encode('latin1')), ">", bad_filename(f), "</a></li>\n",sep="")
 
 def print_head():
     print ("""
