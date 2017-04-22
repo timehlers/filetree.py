@@ -5,6 +5,7 @@ import datetime
 import shlex
 import argparse
 import urllib.parse
+import sys
 
 now = datetime.datetime.now()
 
@@ -75,12 +76,18 @@ def tracing(a):
             dirs.append(item)
     for d in sorted(dirs):
         if os.path.join(a, d) != "./new" and os.path.join(a, d) != "./USB8.old-look-into-new" and os.path.join(a, d) != "./fonts" and os.path.join(a, d) != "./te":
-            print ("<li data-path=\"", get_filepathlink(a, d), "\" title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
+            try:
+                print ("<li data-path=\"", get_filepathlink(a, d), "\" title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
+            except UnicodeEncodeError:
+                print ("<li data-path=\"", get_filepathlink(bad_filename(a), bad_filename(d)), "\" title=\"Size: ", human_size(get_size(os.path.join(bad_filename(a), bad_filename(d)))), "\">", bad_filename(d), "\n<ul>",sep="")
             tracing(os.path.join(a, d))
             print ("</ul></li>\n")
     for f in sorted(files):
         if select_icon(f) != "glyphicon-leaf":
-            print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
+            try:
+                print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
+            except UnicodeEncodeError:
+                print ("<li data-path=\"", get_filepathlink(bad_filename(a), bad_filename(f)), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a), "/", bad_filename(f), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a)), "/", urllib.parse.quote(bad_filename(f)), ">", bad_filename(f), "</a></li>\n",sep="")
 
 def print_head():
     print ("""
@@ -180,6 +187,10 @@ def print_bottom():
     </body>
     </html>
     """)
+
+def bad_filename(filename):
+    temp = filename.encode(sys.getfilesystemencoding(), errors='surrogateescape')
+    return temp.decode('latin-1')
 
 if __name__ == "__main__":
     # execute only if run as a script
