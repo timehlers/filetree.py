@@ -99,9 +99,10 @@ def tracing(a):
         dirs = []
         files = []
         for dirpath, dirnames, filenames in os.walk(a):
-            for d in dirnames:
-                 if "." in d:
-                     dirs.append(d + " SEPARATOR " + os.path.join(dirpath, d))
+            if not dirpath.startswith( "./new" ) and not dirpath.startswith( "./USB8.old-look-into-new" ) and not dirpath.startswith( "./fonts" ) and not dirpath.startswith( "./te" ):
+                for d in dirnames:
+                     if "." in d:
+                         dirs.append(d + " SEPARATOR " + os.path.join(dirpath, d))
         dirs.sort(key=str.lower)
         for letter, dirwithletter in groupby(dirs, key=itemgetter(0)):
             print ("<li title=\"", letter , "\">", letter , "\n<ul>",sep="")
