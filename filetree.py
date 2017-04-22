@@ -122,16 +122,15 @@ def print_head():
     print (now.strftime("%Y-%m-%d %H:%M"))
     print ("""
         </span></h4>
-        <div class="formarea">
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="treesearch" placeholder="search">
-        </div>
+        <form id="s">
+            <input type="search" id="treesearch" />
+            <button type="submit">Search</button>
+        </form>
         <div class="col-md-3">
             <div class="input-group">
             <span class="input-group-addon" id="sizing-addon2">Path</span>
             <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
             </div>
-        </div>
         </div>
         <div id=\"tree\">
         <ul>
@@ -159,19 +158,22 @@ def print_bottom():
           $('#tree').jstree({
             "plugins" : [ "search" ]
           });
-          var to = false;
-          $('#tree').jstree(true).settings.search.show_only_matches = true;
+          $('#tree').on('search.jstree before_open.jstree', function (e, data) {
+              if(data.instance.settings.search.show_only_matches) {
+                  data.instance._data.search.dom.find('.jstree-node')
+                  .show().filter('.jstree-last').filter(function() { return this.nextSibling; }).removeClass('jstree-last')
+                  .end().end().end().find(".jstree-children").each(function () { $(this).children(".jstree-node:visible").eq(-1).addClass("jstree-last"); });
+              }
+          })
+          $('#s').submit(function(e) {
+              e.preventDefault();
+              $('#tree').jstree('close_all');
+              $('#tree').jstree(true).settings.search.show_only_matches = true;
+              $('#tree').jstree(true).search($('#treesearch').val());
           $('#tree').on('changed.jstree', function (e, data) {
             if(data && data.selected && data.selected.length) {
               $('#selectedpath').val(data.node.data.path);
             }
-          });
-          $('#treesearch').keyup(function () {
-            if(to) { clearTimeout(to); }
-            to = setTimeout(function () {
-              var v = $('#treesearch').val();
-              $('#tree').jstree(true).search(v);
-            }, 250);
           });
         });
         </script>
