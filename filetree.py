@@ -150,7 +150,7 @@ def print_bottom():
         print ("""
             <script src=\"https://code.jquery.com/jquery-1.12.4.min.js\"></script>
             <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>
-            <script src=\"https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.4/jstree.min.js\"></script>
+            <script src=\"https://cdnjs.cloudflare.com/ajax/libs/jstree/3.1.1/jstree.min.js\"></script>
             """)
 
     print ("""
