@@ -103,7 +103,7 @@ def tracing(a):
                 for d in dirnames:
                      if "." in d:
                          dirs.append(d + " SEPARATOR " + os.path.join(dirpath, d))
-        dirs.sort(key=str.lower)
+        dirs.sort()
         for letter, dirwithletter in groupby(dirs, key=itemgetter(0)):
             print ("<li title=\"", letter , "\">", letter , "\n<ul>",sep="")
             for d in dirwithletter:
