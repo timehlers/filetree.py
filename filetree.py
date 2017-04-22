@@ -70,10 +70,12 @@ def tracing(a):
     files = []
     dirs = []
     for item in os.listdir(a):
-        if os.path.isfile(os.path.join(a, item)):
-            files.append(item)
-        else:
-            dirs.append(item)
+        ### do NOT trace links
+        if not os.path.islink(os.path.join(a, item)):
+            if os.path.isfile(os.path.join(a, item)):
+                files.append(item)
+            else:
+                dirs.append(item)
     for d in sorted(dirs):
         if os.path.join(a, d) != "./new" and os.path.join(a, d) != "./USB8.old-look-into-new" and os.path.join(a, d) != "./fonts" and os.path.join(a, d) != "./te":
             try:
