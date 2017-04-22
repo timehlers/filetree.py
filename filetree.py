@@ -89,7 +89,7 @@ def tracing(a):
             try:
                 print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'", "onclick=\"window.location.href='", a, "/", f, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(a), "/", urllib.parse.quote(f), ">", f, "</a></li>\n",sep="")
             except UnicodeEncodeError:
-                print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a), "/", bad_filename(f), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a)), "/", urllib.parse.quote(bad_filename(f)), ">", bad_filename(f), "</a></li>\n",sep="")
+                print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a).encode('latin1'), "/", bad_filename(f).encode('latin1'), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a).encode('latin1')), "/", urllib.parse.quote(bad_filename(f).encode('latin1')), ">", bad_filename(f), "</a></li>\n",sep="")
 
 def print_head():
     print ("""
