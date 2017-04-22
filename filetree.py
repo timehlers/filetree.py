@@ -73,9 +73,10 @@ def tracing(a):
         else:
             dirs.append(item)
     for d in sorted(dirs):
-        print ("<li data-path=\"", get_filepathlink(a, d), "\" title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
-        tracing(os.path.join(a, d))
-        print ("</ul></li>\n")
+        if os.path.join(a, d) != "./new" and os.path.join(a, d) != "./USB8.old-look-into-new" and os.path.join(a, d) != "./fonts" and os.path.join(a, d) != "./te":
+           print ("<li data-path=\"", get_filepathlink(a, d), "\" title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
+           tracing(os.path.join(a, d))
+           print ("</ul></li>\n")
     for f in sorted(files):
         print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'>", f, "</li>\n",sep="")
 
