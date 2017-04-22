@@ -78,7 +78,8 @@ def tracing(a):
            tracing(os.path.join(a, d))
            print ("</ul></li>\n")
     for f in sorted(files):
-        print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'>", f, "</li>\n",sep="")
+        if select_icon(f) != "glyphicon-leaf":
+           print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'>", f, "</li>\n",sep="")
 
 def print_head():
     print ("""
