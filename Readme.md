@@ -19,6 +19,7 @@ optional arguments:
                         loading js and css locally
   -p PREFIX, --prefix PREFIX
                         prefix to add in paths
+  -s, --sortfiles       create alphabetical sorting for files
 ```
 
 

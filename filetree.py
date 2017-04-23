@@ -96,21 +96,24 @@ def tracing(a):
                 except UnicodeEncodeError:
                     print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(f)), "\"}'", "onclick=\"window.location.href='", bad_filename(a).encode('latin1'), "/", bad_filename(f).encode('latin1'), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(a).encode('latin1')), "/", urllib.parse.quote(bad_filename(f).encode('latin1')), ">", bad_filename(f), "</a></li>\n",sep="")
     else:
-        dirs = []
-        files = []
+        sorts = []
         for dirpath, dirnames, filenames in os.walk(a):
             if not dirpath.startswith( "./new" ) and not dirpath.startswith( "./USB8.old-look-into-new" ) and not dirpath.startswith( "./fonts" ) and not dirpath.startswith( "./te" ):
-                for d in dirnames:
-                     if "." in d:
-                         dirs.append(d + " SEPARATOR " + os.path.join(dirpath, d))
-        dirs.sort()
-        for letter, dirwithletter in groupby(dirs, key=itemgetter(0)):
+                for f in filenames:
+                    if os.path.isfile(os.path.join(dirpath ,f)):
+                        if select_icon(f) == "glyphicon glyphicon-film" or select_icon(f) == "glyphicon glyphicon-subtitles" or select_icon(f) == "glyphicon glyphicon-tags":
+                            if "." in dirpath.rsplit('/', 1)[-1]:
+                                sorts.append(os.path.join(dirpath.rsplit('/', 1)[-1], f) + " SEPARATOR " + os.path.join(dirpath, f))
+                            else:
+                                sorts.append(f + " SEPARATOR " + os.path.join(dirpath, f))
+        sorts.sort()
+        for letter, sortwithletter in groupby(sorts, key=itemgetter(0)):
             print ("<li title=\"", letter , "\">", letter , "\n<ul>",sep="")
-            for d in dirwithletter:
-                for file in os.listdir(d.split(' SEPARATOR ', 1)[1]):
-                    if os.path.isfile(os.path.join(d.split(' SEPARATOR ', 1)[1], file)):
-                        if select_icon(file) == "glyphicon glyphicon-film" or select_icon(file) == "glyphicon glyphicon-subtitles" or select_icon(file) == "glyphicon glyphicon-tags":
-                            print ("<li title=\"Size: ", human_size(os.path.getsize(os.path.join(d.split(' SEPARATOR ', 1)[1], file))), "\" data-jstree='{\"icon\":\"", select_icon(file), "\"}'", "onclick=\"window.location.href='", os.path.join(d.split(' SEPARATOR ', 1)[1]), "/", file, "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(os.path.join(d.split(' SEPARATOR ', 1)[1])), "/", urllib.parse.quote(file), ">", os.path.join(d.split(' SEPARATOR ', 1)[0]), "/", file, "</a></li>\n",sep="")
+            for d in sortwithletter:
+                try:
+                    print ("<li title=\"Size: ", human_size(os.path.getsize(d.split(' SEPARATOR ', 1)[1])), "\" data-jstree='{\"icon\":\"", select_icon(d.split(' SEPARATOR ', 1)[1]), "\"}'", "onclick=\"window.location.href='", d.split(' SEPARATOR ', 1)[1], "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(d.split(' SEPARATOR ', 1)[1]), ">", d.split(' SEPARATOR ', 1)[0], "</a></li>\n",sep="")
+                except UnicodeEncodeError:
+                    print ("<li title=\"Size: ", human_size(os.path.getsize(d.split(' SEPARATOR ', 1)[1])), "\" data-jstree='{\"icon\":\"", select_icon(bad_filename(d.split(' SEPARATOR ', 1)[1])), "\"}'", "onclick=\"window.location.href='", bad_filename(d.split(' SEPARATOR ', 1)[1]).encode('latin1'), "';\" style=\"cursor:pointer;\">", "<a href=", urllib.parse.quote(bad_filename(d.split(' SEPARATOR ', 1)[1]).encode('latin1')), ">", bad_filename(d.split(' SEPARATOR ', 1)[0]), "</a></li>\n",sep="")
             print ("</ul></li>\n")
 
 def print_head():
