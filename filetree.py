@@ -101,11 +101,18 @@ def tracing(a):
             if not dirpath.startswith( "./new" ) and not dirpath.startswith( "./USB8.old-look-into-new" ) and not dirpath.startswith( "./fonts" ) and not dirpath.startswith( "./te" ):
                 for f in filenames:
                     if os.path.isfile(os.path.join(dirpath ,f)):
-                        if select_icon(f) == "glyphicon glyphicon-film" or select_icon(f) == "glyphicon glyphicon-subtitles" or select_icon(f) == "glyphicon glyphicon-tags":
-                            if "." in dirpath.rsplit('/', 1)[-1]:
-                                sorts.append(os.path.join(dirpath.rsplit('/', 1)[-1], f) + " SEPARATOR " + os.path.join(dirpath, f))
-                            else:
-                                sorts.append(f + " SEPARATOR " + os.path.join(dirpath, f))
+                        if select_icon(f) == "glyphicon glyphicon-film" or select_icon(f) == "glyphicon glyphicon-tags":
+                            if not "sample" in f.lower():
+                                if dirpath.count('.') > 1:
+                                    realname = None
+                                    max_value = 0
+                                    for n in dirpath.split("/"):
+                                        if n.count('.') >= max_value:
+                                            max_value = n.count('.')
+                                            realname = n
+                                    sorts.append(os.path.join(realname, f) + " SEPARATOR " + os.path.join(dirpath, f))
+                                else:
+                                    sorts.append(f + " SEPARATOR " + os.path.join(dirpath, f))
         sorts.sort()
         for letter, sortwithletter in groupby(sorts, key=itemgetter(0)):
             print ("<li title=\"", letter , "\">", letter , "\n<ul>",sep="")
