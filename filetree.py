@@ -103,12 +103,12 @@ def tracing(a):
                     if os.path.isfile(os.path.join(dirpath ,f)):
                         if select_icon(f) == "glyphicon glyphicon-film" or select_icon(f) == "glyphicon glyphicon-tags":
                             if not "sample" in f.lower():
-                                if dirpath.count('.') > 1:
+                                if dirpath.count('.') + dirpath.count(' ') + dirpath.count('_') > 1:
                                     realname = None
                                     max_value = 0
                                     for n in dirpath.split("/"):
-                                        if n.count('.') >= max_value:
-                                            max_value = n.count('.')
+                                        if n.count('.') + n.count(' ') + n.count('_') >= max_value:
+                                            max_value = n.count('.') + n.count(' ') + n.count('_')
                                             realname = n
                                     sorts.append(os.path.join(realname, f) + " SEPARATOR " + os.path.join(dirpath, f))
                                 else:
